@@ -56,6 +56,13 @@ class FareRuleTest extends FlatSpec with Matchers {
     result should be(false)
   }
 
+  it should "not apply for tube journey exiting without entrance station" in {
+    val lastEvent = Some(JourneyEvent(EnterStation, Zone1Only, Tube))
+    val thisEvent = JourneyEvent(EnterStation, Zone1Only, Tube)
+    val result = AnywhereInZone1.applies(thisEvent, lastEvent)
+    result should be(false)
+  }
+
   it should "not apply for tube journey that is entirely outside zone 1" in {
     val lastEvent = Some(JourneyEvent(EnterStation, Zone2Only, Tube))
     val thisEvent = JourneyEvent(ExitStation, Zone2Only, Tube)

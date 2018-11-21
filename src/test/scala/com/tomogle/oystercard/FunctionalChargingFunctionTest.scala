@@ -6,7 +6,7 @@ import org.scalatest.Matchers
 /**
   *
   */
-class FunctionalChargingLogicTest extends FlatSpec with Matchers {
+class FunctionalChargingFunctionTest extends FlatSpec with Matchers {
 
   trait AlwaysAppliesFareRule extends FareRule {
     override def applies(thisEvent: JourneyEvent, lastEvent: Option[JourneyEvent]): Boolean = true
@@ -35,11 +35,11 @@ class FunctionalChargingLogicTest extends FlatSpec with Matchers {
       )
     }
     val rules = Seq(rule1Applies, rule2DoesNotApply, rule3Applies)
-    val underTest = FunctionalChargingLogic(rules)
+    val underTest = FunctionalChargingFunction(rules)
     val lastEvent = Some(JourneyEvent(EnterStation, Zone1Only, Tube))
     val thisEvent = JourneyEvent(ExitStation, Zone1Only, Tube)
     val expectedResult = Seq(Charge(BigDecimal("1.00")), Charge(BigDecimal("-1.00")))
-    val actualResult: Seq[Charge] = underTest.applyChargingLogic(thisEvent, lastEvent)
+    val actualResult: Seq[Charge] = underTest.apply(thisEvent, lastEvent)
     actualResult should be(expectedResult)
   }
 
@@ -60,7 +60,7 @@ class FunctionalChargingLogicTest extends FlatSpec with Matchers {
       )
     }
     val rules = Seq(expected2nd, expected3rd, expected1st)
-    val underTest = FunctionalChargingLogic(rules)
+    val underTest = FunctionalChargingFunction(rules)
     val expectedResult = Seq(expected1st, expected2nd, expected3rd)
     val actualResult = underTest.sortFareRules(rules)
     actualResult should be(expectedResult)

@@ -6,7 +6,7 @@ import org.scalatest.Matchers
 /**
   *
   */
-class PackageTest extends FlatSpec with Matchers {
+class PackageObjectTest extends FlatSpec with Matchers {
 
   behavior of "reduceCharges"
 

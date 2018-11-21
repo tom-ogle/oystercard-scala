@@ -86,3 +86,16 @@ object Any2ZonesExcludingZone1 extends FareRule {
       FareRule.anyTwoZones(thisEvent, lastEvent) &&
       !FareRule.includesZone1(thisEvent, lastEvent)
 }
+
+// Special case rules applied separately from normal FareRules
+trait SpecialCaseRule extends FareRule
+object ChargeMaxFareForEntryGateSkippers extends SpecialCaseRule {
+  override def charge(): Seq[Charge] = Seq(MaxFareCharge)
+
+  override def applies(thisEvent: JourneyEvent, lastEvent: Option[JourneyEvent]): Boolean =
+    lastEvent.exists { previousEvent =>
+      previousEvent.eventType == ExitStation &&
+      thisEvent.eventType == ExitStation
+    } || (lastEvent.isEmpty && thisEvent.eventType == ExitStation)
+
+}

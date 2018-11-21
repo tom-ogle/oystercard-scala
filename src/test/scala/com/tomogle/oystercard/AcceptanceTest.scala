@@ -14,8 +14,6 @@ class AcceptanceTest extends FlatSpec with Matchers {
   it should "run the scenario correctly" in {
     val thirtyPounds = BigDecimal("30.00")
     val card = OysterCard().load(thirtyPounds)
-    // TODO: Really should rework this to run card.applyCharge after every event's charges are generated to
-    // model preventing a user from entering if they don't have enough balance for max charge
     val events = Seq(
       JourneyEvent(EnterStation, Holborn, Tube),
       JourneyEvent(ExitStation, EarlsCourt, Tube),
@@ -26,10 +24,7 @@ class AcceptanceTest extends FlatSpec with Matchers {
       JourneyEvent(EnterStation, EarlsCourt, Tube),
       JourneyEvent(ExitStation, Hammersmith, Tube),
     )
-    val accumulator = ChargeAccumulator()
-    val aggregatedCharge = reduceCharges(accumulator.accumulateCharges(events))
-    val updatedCard = card.applyCharge(aggregatedCharge)
-    println(updatedCard)
+    val updatedCard = simulateJourney(events, card)(FunctionalChargingFunction())
     updatedCard should be(Success(OysterCard(BigDecimal("22.70"))))
   }
 }
